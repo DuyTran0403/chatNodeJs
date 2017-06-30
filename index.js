@@ -22,7 +22,7 @@ io.on("connection", function(socket){
         }
         socket.emit("server-send-rooms", mang);
         socket.emit("server-send-room-socket", data);
-        io.sockets.emit("server-send-danh-sach-users", mangUsersOnline);
+        io.sockets.in(data).emit("server-send-danh-sach-users", mangUsersOnline);
     });
     //tao user
     socket.on("client_gui_username", function(data){
@@ -34,7 +34,7 @@ io.on("connection", function(socket){
             mangUsersOnline.push(data);
             socket.Username = data;
             socket.emit("server-send-dang-ki-thanh-cong", {username:data, id:socket.id});
-            //io.sockets.emit("server-send-danh-sach-users", mangUsersOnline);
+            io.sockets.emit("server-send-danh-sach-users",{username:data, id:socket.id});
         }
     });
 
@@ -43,7 +43,9 @@ io.on("connection", function(socket){
         socket.broadcast.emit("server-send-danh-sach-users", mangUsersOnline);
     });
 
+
     socket.on("client_gui_message", function(data){
+        //io.to(socket.id).emit("server_gui_message", {Username:socket.Username, msg:data});
         io.sockets.in(socket.Phong).emit("server_gui_message", {Username:socket.Username, msg:data});
     });
 
@@ -60,6 +62,12 @@ io.on("connection", function(socket){
     socket.on("user-choc-gheo-socketid-khac", function(data){
         io.to(data).emit("server-xu-li-choc-gheo", socket.Username);
     });
+
+     socket.on("user-chat-user", function(data){
+         io.to(socket.id).emit("server-send-User");
+         io.sockets.emit("server-send-User", {Username:socket.Username, msg:data});
+     });
+
 });
 
 app.get("/", function(req, res) {

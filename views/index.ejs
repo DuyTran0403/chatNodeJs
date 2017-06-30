@@ -16,7 +16,7 @@
                 $("#chatRoom").show();
                 $("#chatForm").hide();
                 $("#loginForm").hide();
-                // var s = "<div socketid='"+data.id+"' class='motUser'>" + data.username + "</div>";
+                //var s = "<div socketid='"+data.id+"' class='motUser'>" + data.username + "</div>";
                 //$("#danhsachUserOnline").append(s);
             });
             //
@@ -30,15 +30,28 @@
                 $("#loginForm").hide();
             });
 
+             socket.on("server-send-User", function(data){
+                $("#chatForm").show();
+                $("#chatRoom").hide();
+                $("#loginForm").hide();
+                var hoten ="<span class='hoten'>" + data.Username + "</span>";
+                var msg = "<span class='msg'>" + data.msg + "</span>";
+                $("#danhsachmsg").append(hoten +":"+" "+ msg + "<div class='block'></div>");
+                
+            });
+
             socket.on("server-send-room-socket", function(data){
                 $("#roomHienTai").html(data);
             });
+
             //
             socket.on("server-send-danh-sach-users", function(data){
-                $("#danhsachUserOnline").html("");
-                data.forEach(function(i) {
-                     $("#danhsachUserOnline").append("<div class='user'>" + i + "</div>");
-                });
+                //$("#danhsachUserOnline").html("");
+                //data.forEach(function(i) {
+                //     $("#danhsachUserOnline").append("<div class='motUser'>" + i + "</div>");
+                //});
+                var s = "<div socketid='"+data.id+"' class='motUser'>" + data.username + "</div>";
+                $("#danhsachUserOnline").append(s);
             });
             //
             socket.on("server_gui_message", function(data){
@@ -73,6 +86,8 @@
                 $("#btnChat").click(function(){
                     socket.emit("client_gui_message", $("#txtMessage").val());
                     $("#txtMessage").val("");
+                    var id = $("#txtMessage").attr("data-id");
+                    socket.emit("user-chat-user",id);
                 });
                 
                 $("#txtMessage").focusin(function(){
@@ -94,9 +109,15 @@
                     socket.emit("tao-room", $("#txtRoom").val());
                 });
 
-                $(document).on("click", ".motUser", function(){
+                $("#danhsachUserOnline").on("click", ".motUser", function(){
+                    $("#chatForm").show();
                     var id = $(this).attr("socketid");
-                    socket.emit("user-choc-gheo-socketid-khac", id);
+                    $("#txtMessage").attr("data-id", id);
+                    //socket.emit("user-chat-user", id);
+                    //alert(id);
+                    //socket.emit("user-choc-gheo-socketid-khac", id);
+                    //socket.emit("client_gui_message-client", $("#txtMessage").val());
+                    //$("#txtMessage").val("");
                 });
                 
             });
@@ -116,8 +137,8 @@
              <h3 style="text-align: center">CREAT-ROOM</h3>
             <input style="margin-left: 150px " type="text" id="txtRoom" placeholder="Input Name Room" />
             <input type="button" id="btnTaoRoom" value="Tao Room" />
-            <div id="title">ROOM DANG CO</div>
-            <div id="dsRoom"></div>
+            <div id="title">Users Online</div>
+            <div id="danhsachUserOnline"></div>
         </div>
         <div id="chatForm">
             <div id="sayHi"> <h4 id="roomHienTai">....</h4>
@@ -125,8 +146,8 @@
                 <input type="button" id="btnLogout" value="Logout" />
             </div>
             <div id="left">
-                <div id="title" >Users Online</div>
-                <div id="danhsachUserOnline"></div>
+                <div id="title" >Room Online</div>
+                <div id="dsRoom"></div>
                 
             </div>
             <div id="right">
@@ -134,7 +155,7 @@
                 <div id="danhsachmsg">
                 </div>
                  <div id="thongbao"></div>
-                <input type="text" id="txtMessage" placeholder="Message...." />
+                <input type="text" data-id="" id="txtMessage" placeholder="Message...." />
                 <input type="button" id="btnChat" value="Chat" />
             </div>
         </div>
