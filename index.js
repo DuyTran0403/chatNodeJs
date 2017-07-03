@@ -64,8 +64,8 @@ io.on("connection", function(socket){
     });
 
      socket.on("user-chat-user", function(data){
-         io.to(socket.id).emit("server-send-User");
-         io.sockets.emit("server-send-User", {Username:socket.Username, msg:data});
+         io.to(data.toun).emit("server-send-User", {Username:socket.Username, msg:data.content});
+         socket.emit("server-send-User", {Username:socket.Username, msg:data.content});
      });
 
 });

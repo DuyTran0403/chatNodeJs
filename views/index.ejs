@@ -13,9 +13,9 @@
             //server đăng kí thành công
             socket.on("server-send-dang-ki-thanh-cong", function(data){
                 $("#currentUser").html(data.username);
-                $("#chatRoom").show();
-                $("#chatForm").hide();
-                $("#loginForm").hide();
+                $("#chatRoom").show(300);
+                $("#chatForm").hide(500);
+                $("#loginForm").hide(500);
                 //var s = "<div socketid='"+data.id+"' class='motUser'>" + data.username + "</div>";
                 //$("#danhsachUserOnline").append(s);
             });
@@ -25,15 +25,15 @@
                 data.map(function(r){
                     $("#dsRoom").append("<h4 class='room'>" + r + "</h4>");
                 });
-                $("#chatRoom").hide();
-                $("#chatForm").show();
-                $("#loginForm").hide();
+                $("#chatRoom").hide(500);
+                $("#chatForm").show(300);
+                $("#loginForm").hide(500);
             });
 
              socket.on("server-send-User", function(data){
-                $("#chatForm").show();
-                $("#chatRoom").hide();
-                $("#loginForm").hide();
+                $("#chatForm").show(300);
+                $("#chatRoom").hide(500);
+                $("#loginForm").hide(500);
                 var hoten ="<span class='hoten'>" + data.Username + "</span>";
                 var msg = "<span class='msg'>" + data.msg + "</span>";
                 $("#danhsachmsg").append(hoten +":"+" "+ msg + "<div class='block'></div>");
@@ -71,9 +71,9 @@
                 alert(data + " " + "vua moi choc ban! :v");
             });
             $(document).ready(function(){
-                $("#loginForm").show();
-                $("#chatRoom").hide();
-                $("#chatForm").hide();
+                $("#loginForm").show(300);
+                $("#chatRoom").hide(500);
+                $("#chatForm").hide(500);
 
                 $("#btnDangki").click(function(){
                     socket.emit("client_gui_username", $("#txtUser").val());
@@ -84,10 +84,10 @@
                 //});
 
                 $("#btnChat").click(function(){
-                    socket.emit("client_gui_message", $("#txtMessage").val());
-                    $("#txtMessage").val("");
                     var id = $("#txtMessage").attr("data-id");
-                    socket.emit("user-chat-user",id);
+                    socket.emit("user-chat-user",{toun: id, content: $("#txtMessage").val()});
+                    socket.emit("client_gui_message", $("#txtMessage").val());
+                     $("#txtMessage").val("");
                 });
                 
                 $("#txtMessage").focusin(function(){
@@ -100,9 +100,9 @@
 
                 $("#btnLogout").click(function(){
                     socket.emit("Logout");
-                    $("#chatRoom").hide();
-                    $("#chatForm").hide();
-                    $("#loginForm").show(200);
+                    $("#chatRoom").hide(500);
+                    $("#chatForm").hide(500);
+                    $("#loginForm").show(300);
                 });
 
                  $("#btnTaoRoom").click(function(){
@@ -110,7 +110,7 @@
                 });
 
                 $("#danhsachUserOnline").on("click", ".motUser", function(){
-                    $("#chatForm").show();
+                    $("#chatForm").show(300);
                     var id = $(this).attr("socketid");
                     $("#txtMessage").attr("data-id", id);
                     //socket.emit("user-chat-user", id);
